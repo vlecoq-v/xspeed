@@ -13,6 +13,7 @@ fun main(args: Array<String>) {
 
 fun test() {
     println( try { makeBoxes("163841689525773") } catch (e: InvalidParameterException) { "KO" })
+    println( try { makeBoxes("988776655433211") } catch (e: InvalidParameterException) { "KO" })
     println( try { makeBoxes("0") } catch (e: InvalidParameterException) { "KO" })
     println( try { makeBoxes("") } catch (e: InvalidParameterException) { "KO" })
     println( try { makeBoxes("coucou") } catch (e: InvalidParameterException) { "KO" })

@@ -12,7 +12,10 @@ import java.security.InvalidParameterException
  */
 fun makeBoxes(rawItems: String): String {
     val items: List<Int> = try {
-        rawItems.map { it.toString().toInt() }.filter { it != 0 }
+        rawItems
+            .map { it.toString().toInt() }
+            .filter { it != 0 }
+            .sortedDescending()
     } catch (e: NumberFormatException) { throw InvalidParameterException("Non int parameter") }
 
     if (items.isEmpty()) throw InvalidParameterException("Empty Item list, items must be > 0")
@@ -31,30 +34,28 @@ fun makeBoxes(rawItems: String): String {
  * TODO: look for optimal matches before putting into box
  *
  * @arg Item is the list of items to fit in box
- * @arg currentBox is the current @Box beeing prepared
+ * @arg currentBox is the current @Box being prepared
  * @arg boxes is a list of the precedent boxes
  *
  * Before each call to this function an item is removed from the items list and put into either a new box or
- * the box beeing prepared
+ * the box being prepared
  */
 fun makeBoxes(items: List<Int>, currentBox: Box, boxes: MutableList<Box>): MutableList<Box> {
-    items.forEachIndexed { index: Int, item: Int ->
-        if (currentBox.totalSize + item <= 10) {
-            currentBox.add(item)
-            if (currentBox.totalSize < 10) // keep on building current box
+    if (currentBox.totalSize < 10) { // look for an item to put in the box
+        items.forEachIndexed { index: Int, item: Int ->
+            if (currentBox.totalSize + item <= 10) {
+                currentBox.add(item)
                 return makeBoxes(items.dropAt(index), currentBox, boxes)
-            else // break
-                return@forEachIndexed
+            }
         }
     }
 
-    // current box cannot be filled with more items --> prepare new box
     boxes.add(currentBox)
-    return if (items.isNotEmpty()) {
-        makeBoxes(
-            items = items.dropAt(0),
-            currentBox = Box(mutableListOf(items[0])),
-            boxes = boxes
-        )
-    } else boxes // no more items to package return item list in form of boxes
+
+    if (items.isEmpty()) return boxes
+    else return makeBoxes(
+        items = items.dropAt(0),
+        currentBox = Box(mutableListOf(items[0])),
+        boxes = boxes
+    )
 }
